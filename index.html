@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>The Smart Throne</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="top-bar">
+        <div id="slide-type" class="chip">TEXT_QUOTE</div>
+        <div id="clock" class="clock">00:00</div>
+      </header>
+
+      <main id="slide-container" class="slide-container">
+        <div id="image-layer" class="image-layer hidden" aria-hidden="true"></div>
+        <div class="scrim"></div>
+        <section class="text-layer">
+          <h1 id="title" class="title"></h1>
+          <p id="content" class="content"></p>
+          <p id="sub-content" class="sub-content hidden"></p>
+        </section>
+      </main>
+
+      <footer class="bottom-bar">
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </footer>
+
+      <button id="admin-hotspot" class="admin-hotspot" aria-label="Admin Menü öffnen"></button>
+      <aside id="admin-panel" class="admin-panel hidden" aria-hidden="true">
+        <h2>Admin</h2>
+        <p>Klick auf "Import", um Bilder nach Schema zu laden:</p>
+        <p><code>TYPE_DURATION_REVEAL_TITLE.webp</code></p>
+        <button id="import-button" type="button">Import</button>
+        <button id="reset-button" type="button">Index zurücksetzen</button>
+        <button id="close-admin" type="button">Schließen</button>
+        <input id="folder-input" class="hidden" type="file" accept="image/*" multiple />
+      </aside>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

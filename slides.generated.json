@@ -1,0 +1,467 @@
+{
+  "slides": [
+    {
+      "id": "q_001",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 16
+    },
+    {
+      "id": "q_002",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 17
+    },
+    {
+      "id": "q_003",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 13
+    },
+    {
+      "id": "v_004",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Luminous",
+      "sub_content": "Leuchtend",
+      "example_sentence": "The watch has luminous hands.",
+      "duration": 14
+    },
+    {
+      "id": "q_005",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Niemand weiss, was er kann, bevor er es versucht.",
+      "sub_content": "Publilius Syrus",
+      "duration": 13
+    },
+    {
+      "id": "i_006",
+      "type": "image_only",
+      "category": "Gallery",
+      "image_path": "https://picsum.photos/seed/smart-throne-6-5020/1080/1920",
+      "caption": "Inspiration #6",
+      "duration": 13
+    },
+    {
+      "id": "q_007",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 19
+    },
+    {
+      "id": "i_008",
+      "type": "image_only",
+      "category": "Gallery",
+      "image_path": "https://picsum.photos/seed/smart-throne-8-1004/1080/1920",
+      "caption": "Inspiration #8",
+      "duration": 13
+    },
+    {
+      "id": "v_009",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Inevitable",
+      "sub_content": "Unvermeidlich",
+      "example_sentence": "Change is an inevitable part of life.",
+      "duration": 14
+    },
+    {
+      "id": "r_010",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Was hat Zaehne, kann aber nicht beissen?",
+      "answer": "Ein Kamm",
+      "reveal_delay": 13,
+      "duration": 19
+    },
+    {
+      "id": "r_011",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Was wird nasser, je mehr es trocknet?",
+      "answer": "Ein Handtuch",
+      "reveal_delay": 12,
+      "duration": 18
+    },
+    {
+      "id": "q_012",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Wer alles gibt, hat nichts zu verlieren.",
+      "sub_content": "Unbekannt",
+      "duration": 17
+    },
+    {
+      "id": "v_013",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Ethereal",
+      "sub_content": "Himmlisch / Fluechtig",
+      "example_sentence": "The music had an ethereal quality.",
+      "duration": 19
+    },
+    {
+      "id": "q_014",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 15
+    },
+    {
+      "id": "q_015",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 19
+    },
+    {
+      "id": "i_016",
+      "type": "image_only",
+      "category": "Gallery",
+      "image_path": "https://picsum.photos/seed/smart-throne-16-3404/1080/1920",
+      "caption": "Inspiration #16",
+      "duration": 13
+    },
+    {
+      "id": "q_017",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Die beste Zeit fuer einen Neuanfang ist jetzt.",
+      "sub_content": "Buddha",
+      "duration": 16
+    },
+    {
+      "id": "q_018",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 17
+    },
+    {
+      "id": "r_019",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Was gehoert dir, aber andere benutzen es oefter?",
+      "answer": "Dein Name",
+      "reveal_delay": 9,
+      "duration": 19
+    },
+    {
+      "id": "v_020",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Ethereal",
+      "sub_content": "Himmlisch / Fluechtig",
+      "example_sentence": "The music had an ethereal quality.",
+      "duration": 19
+    },
+    {
+      "id": "q_021",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Niemand weiss, was er kann, bevor er es versucht.",
+      "sub_content": "Publilius Syrus",
+      "duration": 19
+    },
+    {
+      "id": "v_022",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Ambiguous",
+      "sub_content": "Mehrdeutig",
+      "example_sentence": "The ending of the movie was very ambiguous.",
+      "duration": 16
+    },
+    {
+      "id": "r_023",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Was wird nasser, je mehr es trocknet?",
+      "answer": "Ein Handtuch",
+      "reveal_delay": 12,
+      "duration": 24
+    },
+    {
+      "id": "r_024",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Ich bin schwer, wenn ich vorne bin, aber nicht, wenn ich hinten bin. Was bin ich?",
+      "answer": "Der Buchstabe 'g'",
+      "reveal_delay": 9,
+      "duration": 23
+    },
+    {
+      "id": "v_025",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Persistent",
+      "sub_content": "Beharrlich",
+      "example_sentence": "She is a persistent investigator.",
+      "duration": 20
+    },
+    {
+      "id": "v_026",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Inevitable",
+      "sub_content": "Unvermeidlich",
+      "example_sentence": "Change is an inevitable part of life.",
+      "duration": 16
+    },
+    {
+      "id": "i_027",
+      "type": "image_only",
+      "category": "Gallery",
+      "image_path": "https://picsum.photos/seed/smart-throne-27-3000/1080/1920",
+      "caption": "Inspiration #27",
+      "duration": 14
+    },
+    {
+      "id": "q_028",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 14
+    },
+    {
+      "id": "q_029",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Einfachheit ist die hoechste Stufe der Vollendung.",
+      "sub_content": "Leonardo da Vinci",
+      "duration": 14
+    },
+    {
+      "id": "q_030",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Die beste Zeit fuer einen Neuanfang ist jetzt.",
+      "sub_content": "Buddha",
+      "duration": 17
+    },
+    {
+      "id": "q_031",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Einfachheit ist die hoechste Stufe der Vollendung.",
+      "sub_content": "Leonardo da Vinci",
+      "duration": 19
+    },
+    {
+      "id": "r_032",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Was gehoert dir, aber andere benutzen es oefter?",
+      "answer": "Dein Name",
+      "reveal_delay": 14,
+      "duration": 24
+    },
+    {
+      "id": "v_033",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Persistent",
+      "sub_content": "Beharrlich",
+      "example_sentence": "She is a persistent investigator.",
+      "duration": 16
+    },
+    {
+      "id": "q_034",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Niemand weiss, was er kann, bevor er es versucht.",
+      "sub_content": "Publilius Syrus",
+      "duration": 14
+    },
+    {
+      "id": "q_035",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 20
+    },
+    {
+      "id": "r_036",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Was gehoert dir, aber andere benutzen es oefter?",
+      "answer": "Dein Name",
+      "reveal_delay": 8,
+      "duration": 21
+    },
+    {
+      "id": "q_037",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 13
+    },
+    {
+      "id": "q_038",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Niemand weiss, was er kann, bevor er es versucht.",
+      "sub_content": "Publilius Syrus",
+      "duration": 14
+    },
+    {
+      "id": "q_039",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Probleme sind Gelegenheiten, zu zeigen, was man kann.",
+      "sub_content": "Duke Ellington",
+      "duration": 16
+    },
+    {
+      "id": "i_040",
+      "type": "image_only",
+      "category": "Gallery",
+      "image_path": "https://picsum.photos/seed/smart-throne-40-7623/1080/1920",
+      "caption": "Inspiration #40",
+      "duration": 16
+    },
+    {
+      "id": "q_041",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Wer alles gibt, hat nichts zu verlieren.",
+      "sub_content": "Unbekannt",
+      "duration": 18
+    },
+    {
+      "id": "q_042",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Einfachheit ist die hoechste Stufe der Vollendung.",
+      "sub_content": "Leonardo da Vinci",
+      "duration": 13
+    },
+    {
+      "id": "v_043",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Persistent",
+      "sub_content": "Beharrlich",
+      "example_sentence": "She is a persistent investigator.",
+      "duration": 20
+    },
+    {
+      "id": "v_044",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Ethereal",
+      "sub_content": "Himmlisch / Fluechtig",
+      "example_sentence": "The music had an ethereal quality.",
+      "duration": 18
+    },
+    {
+      "id": "r_045",
+      "type": "riddle",
+      "category": "Brain Gym",
+      "title": "Kurzes Raetsel",
+      "content": "Was wird nasser, je mehr es trocknet?",
+      "answer": "Ein Handtuch",
+      "reveal_delay": 8,
+      "duration": 18
+    },
+    {
+      "id": "v_046",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Ambiguous",
+      "sub_content": "Mehrdeutig",
+      "example_sentence": "The ending of the movie was very ambiguous.",
+      "duration": 20
+    },
+    {
+      "id": "i_047",
+      "type": "image_only",
+      "category": "Gallery",
+      "image_path": "https://picsum.photos/seed/smart-throne-47-8726/1080/1920",
+      "caption": "Inspiration #47",
+      "duration": 15
+    },
+    {
+      "id": "q_048",
+      "type": "text_quote",
+      "category": "Motivation",
+      "title": "Gedanke des Tages",
+      "content": "Die beste Zeit fuer einen Neuanfang ist jetzt.",
+      "sub_content": "Buddha",
+      "duration": 14
+    },
+    {
+      "id": "i_049",
+      "type": "image_only",
+      "category": "Gallery",
+      "image_path": "https://picsum.photos/seed/smart-throne-49-9800/1080/1920",
+      "caption": "Inspiration #49",
+      "duration": 14
+    },
+    {
+      "id": "v_050",
+      "type": "vocabulary",
+      "category": "English",
+      "title": "Word of the Day",
+      "content": "Luminous",
+      "sub_content": "Leuchtend",
+      "example_sentence": "The watch has luminous hands.",
+      "duration": 19
+    }
+  ]
+}
