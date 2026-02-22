@@ -10,6 +10,7 @@
     <div id="app" class="app">
       <header class="top-bar">
         <div id="slide-type" class="chip">TEXT_QUOTE</div>
+        <div id="weather-now" class="chip weather-chip">--°C</div>
         <div id="clock" class="clock">00:00</div>
       </header>
 
@@ -36,6 +37,36 @@
         <p><code>TYPE_DURATION_REVEAL_TITLE.webp</code></p>
         <button id="import-button" type="button">Import</button>
         <button id="reset-button" type="button">Index zurücksetzen</button>
+        <hr />
+        <h3>Wetter</h3>
+        <label class="field checkbox-field">
+          <input id="weather-auto-location" type="checkbox" />
+          <span>Ort automatisch bestimmen (Geolocation)</span>
+        </label>
+        <label class="field">
+          <span>Ort (z. B. Berlin)</span>
+          <input id="weather-location-input" type="text" placeholder="Berlin" />
+        </label>
+        <label class="field">
+          <span>Wetter-Slide alle X Slides (0 = aus)</span>
+          <input id="weather-insert-every" type="number" min="0" max="50" step="1" value="6" />
+        </label>
+        <button id="weather-save-button" type="button">Wetter speichern</button>
+        <button id="weather-refresh-button" type="button">Wetter jetzt aktualisieren</button>
+        <p id="weather-status" class="status-text">Wetter nicht konfiguriert.</p>
+        <hr />
+        <h3>News (heise Atom)</h3>
+        <label class="field">
+          <span>heise Feed</span>
+          <select id="news-feed-select"></select>
+        </label>
+        <label class="field">
+          <span>News-Slide alle X Slides (0 = aus)</span>
+          <input id="news-insert-every" type="number" min="0" max="50" step="1" value="0" />
+        </label>
+        <button id="news-save-button" type="button">News speichern</button>
+        <button id="news-refresh-button" type="button">News jetzt aktualisieren</button>
+        <p id="news-status" class="status-text">News deaktiviert.</p>
         <button id="close-admin" type="button">Schließen</button>
         <input id="folder-input" class="hidden" type="file" accept="image/*" multiple />
       </aside>

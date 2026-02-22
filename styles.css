@@ -32,11 +32,15 @@ body {
 .bottom-bar {
   z-index: 3;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 0.6rem;
   padding: 0.8rem 1rem;
   background: var(--panel);
   backdrop-filter: blur(6px);
+}
+
+.top-bar {
+  justify-content: space-between;
 }
 
 .chip {
@@ -48,8 +52,15 @@ body {
 }
 
 .clock {
+  margin-left: auto;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
+}
+
+.weather-chip {
+  min-width: 5.2rem;
+  text-align: center;
+  color: #dff8f3;
 }
 
 .slide-container {
@@ -96,6 +107,7 @@ body {
   margin: 1rem 0 0;
   font-size: clamp(1rem, 1.9vw, 1.35rem);
   color: #d5e6ed;
+  white-space: pre-line;
 }
 
 .progress-track {
@@ -124,6 +136,10 @@ body {
   background: transparent;
 }
 
+.app.admin-open .admin-hotspot {
+  pointer-events: none;
+}
+
 .admin-panel {
   position: absolute;
   top: 1rem;
@@ -134,6 +150,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 14px;
   background: rgba(4, 14, 20, 0.95);
+  pointer-events: auto;
 }
 
 .admin-panel h2 {
@@ -143,6 +160,50 @@ body {
 .admin-panel p {
   margin: 0.45rem 0;
   color: var(--muted);
+}
+
+.admin-panel hr {
+  margin: 0.9rem 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-panel h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}
+
+.field {
+  display: block;
+  margin-top: 0.6rem;
+}
+
+.field > span {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.field input[type="text"],
+.field input[type="number"],
+.field select {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.checkbox-field > span {
+  margin: 0;
 }
 
 .admin-panel button {
@@ -156,6 +217,38 @@ body {
   cursor: pointer;
   background: var(--accent);
   color: #022118;
+  transition: transform 80ms ease, filter 120ms ease, box-shadow 120ms ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.admin-panel button:hover {
+  filter: brightness(1.03);
+}
+
+.admin-panel button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.admin-panel button:active,
+.admin-panel button.is-pressed {
+  transform: translateY(1px) scale(0.985);
+  filter: brightness(0.9);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35) inset, 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.admin-panel button.is-busy {
+  filter: saturate(0.75) brightness(0.95);
+}
+
+.admin-panel button.is-success {
+  background: #79dd92;
+  color: #0f2d16;
+}
+
+.admin-panel button.is-error {
+  background: #f08b82;
+  color: #32110e;
 }
 
 #reset-button {
@@ -163,9 +256,24 @@ body {
   color: #2f2a14;
 }
 
+#weather-refresh-button {
+  background: #5cc1f0;
+  color: #062436;
+}
+
+#news-refresh-button {
+  background: #8bd47a;
+  color: #102f0f;
+}
+
 #close-admin {
   background: var(--danger);
   color: #fff;
+}
+
+.status-text {
+  min-height: 2.5rem;
+  font-size: 0.9rem;
 }
 
 .hidden {
