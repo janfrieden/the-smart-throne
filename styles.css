@@ -142,15 +142,41 @@ body {
 
 .admin-panel {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  inset: 0;
   z-index: 5;
-  width: min(92vw, 360px);
-  padding: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 14px;
-  background: rgba(4, 14, 20, 0.95);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgba(4, 14, 20, 0.97);
   pointer-events: auto;
+}
+
+.admin-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.8rem;
+  align-items: start;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(4, 14, 20, 0.98);
+}
+
+.admin-content {
+  flex: 1;
+  overflow: auto;
+  padding: 0.85rem 1rem 6.25rem;
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
+}
+
+.admin-section {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .admin-panel h2 {
@@ -160,12 +186,6 @@ body {
 .admin-panel p {
   margin: 0.45rem 0;
   color: var(--muted);
-}
-
-.admin-panel hr {
-  margin: 0.9rem 0;
-  border: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .admin-panel h3 {
@@ -221,6 +241,19 @@ body {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
+.admin-actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem calc(0.85rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(to top, rgba(4, 14, 20, 0.99), rgba(4, 14, 20, 0.92));
+}
+
 .admin-panel button:hover {
   filter: brightness(1.03);
 }
@@ -266,14 +299,23 @@ body {
   color: #102f0f;
 }
 
+#admin-apply-button {
+  background: linear-gradient(90deg, #59c7ee, #7ddf95, #c2a8f5);
+  color: #0d1622;
+}
+
 #close-admin {
   background: var(--danger);
   color: #fff;
+  width: auto;
+  min-width: 8.5rem;
+  margin-top: 0;
 }
 
 .status-text {
   min-height: 2.5rem;
   font-size: 0.9rem;
+  margin-bottom: 0;
 }
 
 .hidden {
@@ -284,5 +326,13 @@ body {
   .top-bar,
   .bottom-bar {
     padding: 0.65rem 0.75rem;
+  }
+
+  .admin-header {
+    grid-template-columns: 1fr;
+  }
+
+  #close-admin {
+    width: 100%;
   }
 }

@@ -1,17 +1,20 @@
 const STORAGE_KEY = "smart_throne_last_index";
 const WEATHER_SETTINGS_KEY = "smart_throne_weather_settings";
 const NEWS_SETTINGS_KEY = "smart_throne_news_settings";
+const WIKI_SETTINGS_KEY = "smart_throne_wiki_settings";
 const LONG_PRESS_MS = 900;
 const SLIDES_URL = "./slides.json";
 const WEATHER_REFRESH_MS = 15 * 60 * 1000;
 const WEATHER_SLIDE_DURATION_SECONDS = 16;
 const NEWS_REFRESH_MS = 10 * 60 * 1000;
 const NEWS_SLIDE_DURATION_SECONDS = 14;
+const WIKI_REFRESH_MS = 60 * 60 * 1000;
+const WIKI_SLIDE_DURATION_SECONDS = 14;
 
 /**
  * @typedef {Object} Slide
  * @property {string} id
- * @property {"TEXT_QUOTE"|"IMAGE_ONLY"|"RIDDLE"|"VOCABULARY"|"WEATHER"|"NEWS"} type
+ * @property {"TEXT_QUOTE"|"IMAGE_ONLY"|"RIDDLE"|"VOCABULARY"|"WEATHER"|"NEWS"|"WIKI"} type
  * @property {string|null} category
  * @property {string|null} title
  * @property {string|null} content
@@ -25,6 +28,11 @@ const NEWS_SLIDE_DURATION_SECONDS = 14;
  * @typedef {Object} WeatherSettings
  * @property {"auto"|"manual"} mode
  * @property {string} locationQuery
+ * @property {number} insertEvery
+ */
+
+/**
+ * @typedef {Object} WikiSettings
  * @property {number} insertEvery
  */
 
@@ -134,14 +142,18 @@ let timerHandle = null;
 let clockHandle = null;
 let weatherRefreshHandle = null;
 let newsRefreshHandle = null;
+let wikiRefreshHandle = null;
 let activeSpecialSlideKind = null;
 let baseSlidesSinceWeather = 0;
 let baseSlidesSinceNews = 0;
+let baseSlidesSinceWiki = 0;
 
 /** @type {WeatherSettings} */
 let weatherSettings = loadWeatherSettings();
 /** @type {NewsSettings} */
 let newsSettings = loadNewsSettings();
+/** @type {WikiSettings} */
+let wikiSettings = loadWikiSettings();
 let weatherState = {
   statusText: "Wetter nicht konfiguriert.",
   coords: null,
@@ -157,6 +169,12 @@ let newsState = {
   headlines: [],
   lastUpdatedAt: 0,
   feedKey: null
+};
+let wikiState = {
+  statusText: "Wikipedia deaktiviert.",
+  article: null,
+  articleDateKey: null,
+  lastUpdatedAt: 0
 };
 let newsRotationIndex = 0;
 const buttonFeedbackTimers = new WeakMap();
@@ -180,14 +198,13 @@ const ui = {
   weatherAutoLocation: document.getElementById("weather-auto-location"),
   weatherLocationInput: document.getElementById("weather-location-input"),
   weatherInsertEvery: document.getElementById("weather-insert-every"),
-  weatherSaveButton: document.getElementById("weather-save-button"),
-  weatherRefreshButton: document.getElementById("weather-refresh-button"),
   weatherStatus: document.getElementById("weather-status"),
   newsFeedSelect: document.getElementById("news-feed-select"),
   newsInsertEvery: document.getElementById("news-insert-every"),
-  newsSaveButton: document.getElementById("news-save-button"),
-  newsRefreshButton: document.getElementById("news-refresh-button"),
-  newsStatus: document.getElementById("news-status")
+  newsStatus: document.getElementById("news-status"),
+  wikiInsertEvery: document.getElementById("wiki-insert-every"),
+  wikiStatus: document.getElementById("wiki-status"),
+  adminApplyButton: document.getElementById("admin-apply-button")
 };
 
 async function handleWeatherSaveAction() {
@@ -202,6 +219,24 @@ async function handleWeatherRefreshAction() {
   setWeatherStatus("Wetter wird manuell aktualisiert...");
   readWeatherControlsToState();
   await refreshWeatherData({ forceRelocate: weatherSettings.mode === "auto" });
+}
+
+async function handleAdminApplyAllAction() {
+  readWeatherControlsToState();
+  readNewsControlsToState();
+  readWikiControlsToState();
+
+  weatherState.coords = null;
+  weatherState.sourceKey = null;
+  newsState.feedKey = null;
+  newsRotationIndex = 0;
+  baseSlidesSinceWeather = 0;
+  baseSlidesSinceNews = 0;
+  baseSlidesSinceWiki = 0;
+
+  await handleWeatherSaveAction();
+  await refreshNewsData();
+  await refreshWikiData();
 }
 
 function flashButtonFeedback(button, { label, className, durationMs = 1200 } = {}) {
@@ -232,7 +267,7 @@ function sanitizeType(rawType) {
     .trim()
     .toUpperCase()
     .replace(/[-\s]+/g, "_");
-  if (["TEXT_QUOTE", "IMAGE_ONLY", "RIDDLE", "VOCABULARY", "WEATHER", "NEWS"].includes(t)) {
+  if (["TEXT_QUOTE", "IMAGE_ONLY", "RIDDLE", "VOCABULARY", "WEATHER", "NEWS", "WIKI"].includes(t)) {
     return t;
   }
   return "IMAGE_ONLY";
@@ -281,6 +316,12 @@ function defaultNewsSettings() {
   };
 }
 
+function defaultWikiSettings() {
+  return {
+    insertEvery: 0
+  };
+}
+
 function loadWeatherSettings() {
   try {
     const parsed = JSON.parse(localStorage.getItem(WEATHER_SETTINGS_KEY) || "{}");
@@ -309,12 +350,27 @@ function loadNewsSettings() {
   }
 }
 
+function loadWikiSettings() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(WIKI_SETTINGS_KEY) || "{}");
+    return {
+      insertEvery: clampNumber(parsed.insertEvery, 0, 50, defaultWikiSettings().insertEvery)
+    };
+  } catch {
+    return defaultWikiSettings();
+  }
+}
+
 function saveWeatherSettings() {
   localStorage.setItem(WEATHER_SETTINGS_KEY, JSON.stringify(weatherSettings));
 }
 
 function saveNewsSettings() {
   localStorage.setItem(NEWS_SETTINGS_KEY, JSON.stringify(newsSettings));
+}
+
+function saveWikiSettings() {
+  localStorage.setItem(WIKI_SETTINGS_KEY, JSON.stringify(wikiSettings));
 }
 
 function setWeatherStatus(text) {
@@ -328,6 +384,13 @@ function setNewsStatus(text) {
   newsState.statusText = text;
   if (ui.newsStatus) {
     ui.newsStatus.textContent = text;
+  }
+}
+
+function setWikiStatus(text) {
+  wikiState.statusText = text;
+  if (ui.wikiStatus) {
+    ui.wikiStatus.textContent = text;
   }
 }
 
@@ -346,7 +409,8 @@ function updateWeatherBadge() {
 
   const label = getWeatherCodeLabel(weatherState.current.weatherCode);
   const place = weatherState.locationLabel || "Wetter";
-  ui.weatherNow.textContent = `${formatTemperature(weatherState.current.temperature)}`;
+  const icon = getWeatherIcon(weatherState.current.weatherCode, weatherState.current.isDay);
+  ui.weatherNow.textContent = `${icon} ${formatTemperature(weatherState.current.temperature)}`;
   ui.weatherNow.title = `${place}: ${label}`;
 }
 
@@ -357,6 +421,22 @@ function updateClock() {
 
 function getWeatherCodeLabel(code) {
   return WEATHER_CODE_LABELS[Number(code)] || "Wetter";
+}
+
+function getWeatherIcon(code, isDay = true) {
+  const weatherCode = Number(code);
+  const day = isDay !== false;
+
+  if (weatherCode === 0) return day ? "☀️" : "🌙";
+  if (weatherCode === 1) return day ? "🌤️" : "🌙";
+  if (weatherCode === 2) return day ? "⛅" : "☁️";
+  if (weatherCode === 3) return "☁️";
+  if ([45, 48].includes(weatherCode)) return "🌫️";
+  if ([51, 53, 55, 56, 57].includes(weatherCode)) return "🌦️";
+  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(weatherCode)) return "🌧️";
+  if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) return "🌨️";
+  if ([95, 96, 99].includes(weatherCode)) return "⛈️";
+  return "🌡️";
 }
 
 function formatDateShort(dateString) {
@@ -494,6 +574,31 @@ function buildNewsSlide() {
   };
 }
 
+function buildWikiSlide() {
+  const article = wikiState.article;
+  if (!article) return null;
+
+  const subLines = [
+    article.extract ? truncateText(article.extract, 260) : "",
+    article.dateLabel ? `Wikipedia Artikel des Tages · ${article.dateLabel}` : "Wikipedia Artikel des Tages",
+    article.url || ""
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return {
+    id: `wiki-${wikiState.articleDateKey || "today"}`,
+    type: "WIKI",
+    category: "Wikipedia",
+    title: "Artikel des Tages",
+    content: truncateText(article.title || "Wikipedia", 220),
+    subContent: subLines || null,
+    imagePath: article.imageUrl || null,
+    duration: WIKI_SLIDE_DURATION_SECONDS,
+    revealDelay: null
+  };
+}
+
 function buildWeatherSlide() {
   if (!weatherState.current) return null;
 
@@ -504,7 +609,7 @@ function buildWeatherSlide() {
     const prefix = i === 0 ? "Heute" : i === 1 ? "Morgen" : formatDateShort(day.date);
     const min = Number.isFinite(day.tempMin) ? Math.round(day.tempMin) : "--";
     const max = Number.isFinite(day.tempMax) ? Math.round(day.tempMax) : "--";
-    dailyLines.push(`${prefix}: ${min} bis ${max}°C, ${getWeatherCodeLabel(day.weatherCode)}`);
+    dailyLines.push(`${getWeatherIcon(day.weatherCode)} ${prefix}: ${min} bis ${max}°C, ${getWeatherCodeLabel(day.weatherCode)}`);
   }
 
   const updatedTime = weatherState.lastUpdatedAt
@@ -514,14 +619,16 @@ function buildWeatherSlide() {
   const footer = updatedTime ? `Aktualisiert: ${updatedTime}` : null;
   const details = [...dailyLines, footer].filter(Boolean).join("\n");
   const place = weatherState.locationLabel || "Aktueller Ort";
+  const currentIcon = getWeatherIcon(weatherState.current.weatherCode, weatherState.current.isDay);
+  const dayNightLabel = weatherState.current.isDay === false ? "Nacht" : "Tag";
 
   return {
     id: `weather-${weatherState.lastUpdatedAt || 0}`,
     type: "WEATHER",
     category: "Wetter",
     title: `Wetter in ${place}`,
-    content: `${formatTemperature(weatherState.current.temperature)} · ${getWeatherCodeLabel(weatherState.current.weatherCode)}`,
-    subContent: details,
+    content: `${currentIcon} ${formatTemperature(weatherState.current.temperature)} · ${getWeatherCodeLabel(weatherState.current.weatherCode)}`,
+    subContent: [`${dayNightLabel} · aktuell`, details].filter(Boolean).join("\n"),
     imagePath: null,
     duration: WEATHER_SLIDE_DURATION_SECONDS,
     revealDelay: null
@@ -534,6 +641,9 @@ function getCurrentSlide() {
   }
   if (activeSpecialSlideKind === "news") {
     return buildNewsSlide() || slides[currentIndex] || null;
+  }
+  if (activeSpecialSlideKind === "wiki") {
+    return buildWikiSlide() || slides[currentIndex] || null;
   }
   return slides[currentIndex] || null;
 }
@@ -569,6 +679,10 @@ function canInsertNewsSlide() {
   return newsSettings.insertEvery > 0 && newsState.headlines.length > 0;
 }
 
+function canInsertWikiSlide() {
+  return wikiSettings.insertEvery > 0 && !!wikiState.article;
+}
+
 function advanceSlide() {
   if (!slides.length) return;
 
@@ -585,10 +699,18 @@ function advanceSlide() {
 
   baseSlidesSinceWeather += 1;
   baseSlidesSinceNews += 1;
+  baseSlidesSinceWiki += 1;
 
   if (canInsertNewsSlide() && baseSlidesSinceNews >= newsSettings.insertEvery) {
     baseSlidesSinceNews = 0;
     activeSpecialSlideKind = "news";
+    startSlide();
+    return;
+  }
+
+  if (canInsertWikiSlide() && baseSlidesSinceWiki >= wikiSettings.insertEvery) {
+    baseSlidesSinceWiki = 0;
+    activeSpecialSlideKind = "wiki";
     startSlide();
     return;
   }
@@ -827,7 +949,7 @@ async function fetchWeatherForCoords(coords) {
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(coords.latitude));
   url.searchParams.set("longitude", String(coords.longitude));
-  url.searchParams.set("current", "temperature_2m,weather_code");
+  url.searchParams.set("current", "temperature_2m,weather_code,is_day");
   url.searchParams.set("current_weather", "true");
   url.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min");
   url.searchParams.set("forecast_days", "3");
@@ -844,6 +966,8 @@ async function fetchWeatherForCoords(coords) {
   const daily = data?.daily || {};
   const temperature = Number(current.temperature_2m ?? current.temperature ?? currentWeather.temperature);
   const weatherCode = Number(current.weather_code ?? current.weathercode ?? currentWeather.weathercode ?? currentWeather.weather_code);
+  const isDayRaw = current.is_day ?? currentWeather.is_day;
+  const isDay = isDayRaw === 0 ? false : isDayRaw === 1 ? true : null;
 
   if (!Number.isFinite(temperature)) {
     throw new Error("Wetterdaten unvollständig (Temperatur fehlt).");
@@ -851,7 +975,8 @@ async function fetchWeatherForCoords(coords) {
 
   weatherState.current = {
     temperature,
-    weatherCode
+    weatherCode,
+    isDay
   };
 
   const times = Array.isArray(daily.time) ? daily.time : [];
@@ -881,6 +1006,84 @@ async function fetchNewsFeedHeadlines(feed) {
     throw new Error("Keine Headlines im Feed gefunden.");
   }
   return headlines;
+}
+
+function formatWikiDateParts(date) {
+  return {
+    y: String(date.getFullYear()),
+    m: String(date.getMonth() + 1).padStart(2, "0"),
+    d: String(date.getDate()).padStart(2, "0")
+  };
+}
+
+function parseWikiFeaturedTfa(data) {
+  const tfa = data?.tfa || null;
+  if (!tfa) return null;
+
+  const title =
+    tfa.titles?.normalized ||
+    tfa.titles?.display ||
+    tfa.title ||
+    "";
+  const extract = tfa.extract || tfa.description || "";
+  const url =
+    tfa.content_urls?.desktop?.page ||
+    tfa.content_urls?.mobile?.page ||
+    tfa.originalimage?.source ||
+    "";
+  const imageUrl =
+    tfa.originalimage?.source ||
+    tfa.thumbnail?.source ||
+    null;
+
+  if (!title) return null;
+
+  return {
+    title,
+    extract,
+    url,
+    imageUrl
+  };
+}
+
+async function fetchWikipediaArticleOfTheDay() {
+  const candidates = [new Date(), new Date(Date.now() - 24 * 60 * 60 * 1000)];
+  let lastError = null;
+
+  for (let i = 0; i < candidates.length; i += 1) {
+    const date = candidates[i];
+    const { y, m, d } = formatWikiDateParts(date);
+    const endpoint = `https://de.wikipedia.org/api/rest_v1/feed/featured/${y}/${m}/${d}`;
+
+    try {
+      const response = await fetch(endpoint, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const data = await response.json();
+      const article = parseWikiFeaturedTfa(data);
+      if (!article) {
+        throw new Error("Kein Artikel des Tages gefunden.");
+      }
+
+      const dateLabel = date.toLocaleDateString("de-DE", {
+        weekday: "short",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+
+      return {
+        ...article,
+        dateKey: `${y}-${m}-${d}`,
+        dateLabel
+      };
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError || new Error("Wikipedia Artikel des Tages konnte nicht geladen werden.");
 }
 
 function applyWeatherLocation(locationResult, sourceKey) {
@@ -975,6 +1178,34 @@ async function refreshNewsData() {
   }
 }
 
+async function refreshWikiData() {
+  const intervalInfo =
+    wikiSettings.insertEvery > 0
+      ? `Wikipedia-Slide alle ${wikiSettings.insertEvery} Slides.`
+      : "Wikipedia-Slide deaktiviert.";
+
+  if (wikiSettings.insertEvery <= 0) {
+    setWikiStatus(`Wikipedia Artikel des Tages. ${intervalInfo}`);
+    return;
+  }
+
+  try {
+    setWikiStatus("Wikipedia Artikel des Tages wird geladen...");
+    const article = await fetchWikipediaArticleOfTheDay();
+    wikiState.article = article;
+    wikiState.articleDateKey = article.dateKey;
+    wikiState.lastUpdatedAt = Date.now();
+
+    setWikiStatus(`${article.title}. ${intervalInfo}`);
+    if (activeSpecialSlideKind === "wiki") {
+      startSlide();
+    }
+  } catch (error) {
+    wikiState.article = null;
+    setWikiStatus(`Wikipediafehler: ${error instanceof Error ? error.message : "Unbekannter Fehler"}`);
+  }
+}
+
 function scheduleWeatherRefresh() {
   clearInterval(weatherRefreshHandle);
   weatherRefreshHandle = setInterval(() => {
@@ -991,6 +1222,15 @@ function scheduleNewsRefresh() {
       // Status handling happens inside refreshNewsData.
     });
   }, NEWS_REFRESH_MS);
+}
+
+function scheduleWikiRefresh() {
+  clearInterval(wikiRefreshHandle);
+  wikiRefreshHandle = setInterval(() => {
+    refreshWikiData().catch(() => {
+      // Status handling happens inside refreshWikiData.
+    });
+  }, WIKI_REFRESH_MS);
 }
 
 async function openDirectoryPickerImport() {
@@ -1043,6 +1283,13 @@ function syncNewsControlsFromState() {
   setNewsStatus(newsState.statusText || "News deaktiviert.");
 }
 
+function syncWikiControlsFromState() {
+  if (ui.wikiInsertEvery) {
+    ui.wikiInsertEvery.value = String(wikiSettings.insertEvery);
+  }
+  setWikiStatus(wikiState.statusText || "Wikipedia deaktiviert.");
+}
+
 function readWeatherControlsToState() {
   weatherSettings = {
     mode: ui.weatherAutoLocation.checked ? "auto" : "manual",
@@ -1067,6 +1314,16 @@ function readNewsControlsToState() {
   saveNewsSettings();
 }
 
+function readWikiControlsToState() {
+  wikiSettings = {
+    insertEvery: clampNumber(ui.wikiInsertEvery?.value, 0, 50, 0)
+  };
+  if (ui.wikiInsertEvery) {
+    ui.wikiInsertEvery.value = String(wikiSettings.insertEvery);
+  }
+  saveWikiSettings();
+}
+
 function setupAdminLongPress() {
   let pressTimer = null;
 
@@ -1078,6 +1335,7 @@ function setupAdminLongPress() {
       ui.app?.classList.add("admin-open");
       syncWeatherControlsFromState();
       syncNewsControlsFromState();
+      syncWikiControlsFromState();
     }, LONG_PRESS_MS);
   };
 
@@ -1104,6 +1362,7 @@ function setupAdminActions() {
     activeSpecialSlideKind = null;
     baseSlidesSinceWeather = 0;
     baseSlidesSinceNews = 0;
+    baseSlidesSinceWiki = 0;
     saveLastIndex(currentIndex);
     startSlide();
   });
@@ -1118,72 +1377,24 @@ function setupAdminActions() {
     ui.weatherLocationInput.disabled = ui.weatherAutoLocation.checked;
   });
 
-  ui.adminPanel?.addEventListener("click", async (event) => {
-    const target = event.target instanceof Element ? event.target : null;
-    if (!target) return;
-
-    if (target.closest("#weather-save-button")) {
-      event.preventDefault();
-      flashButtonFeedback(ui.weatherSaveButton, {
-        label: "Speichert...",
-        className: "is-busy",
-        durationMs: 2200
-      });
-      await handleWeatherSaveAction();
-      const ok = !!weatherState.current && !String(weatherState.statusText || "").startsWith("Wetterfehler:");
-      flashButtonFeedback(ui.weatherSaveButton, {
-        label: ok ? "Gespeichert" : "Fehler",
-        className: ok ? "is-success" : "is-error"
-      });
-      return;
-    }
-
-    if (target.closest("#weather-refresh-button")) {
-      event.preventDefault();
-      flashButtonFeedback(ui.weatherRefreshButton, {
-        label: "Aktualisiert...",
-        className: "is-busy",
-        durationMs: 2200
-      });
-      await handleWeatherRefreshAction();
-      const ok = !!weatherState.current && !String(weatherState.statusText || "").startsWith("Wetterfehler:");
-      flashButtonFeedback(ui.weatherRefreshButton, {
-        label: ok ? "Aktualisiert" : "Fehler",
-        className: ok ? "is-success" : "is-error"
-      });
-    }
-  });
-
-  ui.newsSaveButton?.addEventListener("click", async () => {
-    flashButtonFeedback(ui.newsSaveButton, {
-      label: "Speichert...",
+  ui.adminApplyButton?.addEventListener("click", async () => {
+    flashButtonFeedback(ui.adminApplyButton, {
+      label: "Speichert & aktualisiert...",
       className: "is-busy",
-      durationMs: 2200
+      durationMs: 3000
     });
-    readNewsControlsToState();
-    newsState.feedKey = null;
-    newsRotationIndex = 0;
-    baseSlidesSinceNews = 0;
-    await refreshNewsData();
-    const ok = !String(newsState.statusText || "").startsWith("Newsfehler:");
-    flashButtonFeedback(ui.newsSaveButton, {
-      label: ok ? "Gespeichert" : "Fehler",
-      className: ok ? "is-success" : "is-error"
-    });
-  });
 
-  ui.newsRefreshButton?.addEventListener("click", async () => {
-    flashButtonFeedback(ui.newsRefreshButton, {
-      label: "Aktualisiert...",
-      className: "is-busy",
-      durationMs: 2200
-    });
-    readNewsControlsToState();
-    await refreshNewsData();
-    const ok = !String(newsState.statusText || "").startsWith("Newsfehler:");
-    flashButtonFeedback(ui.newsRefreshButton, {
-      label: ok ? "Aktualisiert" : "Fehler",
-      className: ok ? "is-success" : "is-error"
+    await handleAdminApplyAllAction();
+
+    const hasWeatherError = String(weatherState.statusText || "").startsWith("Wetterfehler:");
+    const hasNewsError = String(newsState.statusText || "").startsWith("Newsfehler:");
+    const hasWikiError = String(wikiState.statusText || "").startsWith("Wikipediafehler:");
+    const ok = !hasWeatherError && !hasNewsError && !hasWikiError;
+
+    flashButtonFeedback(ui.adminApplyButton, {
+      label: ok ? "Gespeichert & aktualisiert" : "Teilweise Fehler",
+      className: ok ? "is-success" : "is-error",
+      durationMs: 1600
     });
   });
 }
@@ -1207,8 +1418,10 @@ async function init() {
 
   syncWeatherControlsFromState();
   syncNewsControlsFromState();
+  syncWikiControlsFromState();
   scheduleWeatherRefresh();
   scheduleNewsRefresh();
+  scheduleWikiRefresh();
 
   setupAdminLongPress();
   setupAdminActions();
@@ -1219,6 +1432,9 @@ async function init() {
   });
   refreshNewsData().catch(() => {
     // Status handling happens inside refreshNewsData.
+  });
+  refreshWikiData().catch(() => {
+    // Status handling happens inside refreshWikiData.
   });
 }
 
